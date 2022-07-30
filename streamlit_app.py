@@ -3,12 +3,18 @@ import streamlit as st
 import altair as alt
 import pandas as pd
 import numpy as np
-from numerize.numerize import numerize as nm
 
-company_data = pd.read_csv('./data/final.csv')
+from numerize.numerize import numerize as nm
+from sqlalchemy import create_engine
+
+credentials = st.secrets['postgres']
+url = 'postgresql://{0}:{1}@{2}/{3}'.format(credentials['user'], credentials['password'], credentials['host'], credentials['dbname'])
+
+engine = create_engine(url)
+
+company_data = pd.read_sql('select * from public.financial_report', engine)
 company_list = list(set(company_data['Code']))
 company_list.sort()
-
 
 selected_company_code = st.selectbox('Select Company:', (company_list))
 asset = company_data[company_data['Code'] == selected_company_code]
