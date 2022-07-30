@@ -12,7 +12,12 @@ url = 'postgresql://{0}:{1}@{2}/{3}'.format(credentials['user'], credentials['pa
 
 engine = create_engine(url)
 
-company_data = pd.read_sql('select * from public.financial_report', engine)
+@st.cache
+def query(sql, engine):
+    query_result = pd.read_sql(sql, engine)
+    return query_result
+
+company_data = query('select * from public.financial_report', engine)
 company_list = list(set(company_data['Code']))
 company_list.sort()
 
