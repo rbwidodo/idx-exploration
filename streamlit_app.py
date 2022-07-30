@@ -16,7 +16,8 @@ company_data = pd.read_sql('select * from public.financial_report', engine)
 company_list = list(set(company_data['Code']))
 company_list.sort()
 
-selected_company_code = st.selectbox('Select Company:', (company_list))
+st.title('Laporan Keuangan Perusahaan Publik Indonesia')
+selected_company_code = st.selectbox('Pilih kode saham perusahaan:', (company_list))
 asset = company_data[company_data['Code'] == selected_company_code]
 
 latest = max(asset['Tahun - Kuartal'])
@@ -103,8 +104,8 @@ eps = alt.Chart(asset).mark_bar().encode(
     y='Laba (rugi) per saham dasar dari operasi yang dilanjutkan',
     tooltip=['Tahun - Kuartal', 'Laba (rugi) per saham dasar dari operasi yang dilanjutkan'])
 
-st.markdown('**Latest Performance**')
-st.markdown('Display current key metrics compared with same period in previous year')
+st.markdown('## Kinerja Keuangan Utama untuk {0}'.format(selected_company_code))
+st.markdown('**Laporan Terakhir: {0}**'.format(latest))
 
 col1, col2, col3 = st.columns(3)
 col1.metric(label='Current Ratio', value=current_ratio_last, delta=current_ratio_delta)
@@ -122,13 +123,35 @@ col8.metric(label='Profit (IDR), Growth (%)', value=nm(int(prf_last)), delta=np.
 col9.metric(label='EPS (IDR), Growth (%)', value=eps_last, delta=np.round(eps_delta*100,2))
 
 st.markdown('___')
-
+st.write('## Kinerja Historis untuk {0}'.format(selected_company_code))
+st.write('### Current Ratio'.format(selected_company_code))
 st.altair_chart(current_ratio, use_container_width=True)
+
+st.write('### Debt Equity Ratio'.format(selected_company_code))
 st.altair_chart(debt_equity_ratio, use_container_width=True)
+
+st.write('### Gross Profit Margin (%)'.format(selected_company_code))
 st.altair_chart(gross_profit_margin, use_container_width=True)
+
+st.write('### Net Profit Margin (%)'.format(selected_company_code))
 st.altair_chart(net_profit_margin, use_container_width=True)
+
+st.write('### Return on Asset (%)'.format(selected_company_code))
+st.write('Angka kumulatif tahun berjalan')
 st.altair_chart(return_on_asset, use_container_width=True)
+
+st.write('### Return on Equity (%)'.format(selected_company_code))
+st.write('Angka kumulatif tahun berjalan')
 st.altair_chart(return_on_equity, use_container_width=True)
+
+st.write('### Revenue (IDR)'.format(selected_company_code))
+st.write('Angka kumulatif tahun berjalan')
 st.altair_chart(revenue, use_container_width=True)
+
+st.write('### Profit (IDR)'.format(selected_company_code))
+st.write('Angka kumulatif tahun berjalan')
 st.altair_chart(profit, use_container_width=True)
+
+st.write('### Earning Per Share (IDR)'.format(selected_company_code))
+st.write('Angka kumulatif tahun berjalan')
 st.altair_chart(eps, use_container_width=True)
